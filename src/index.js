@@ -1,7 +1,6 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
-const { request } = require('http');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -77,7 +76,15 @@ client.on('message', message => {
 		console.error(error);
 		message.reply('Il y a eu une errreur lors de l\'execution de la commande!');
 	}
-	let p = message.createdTimestamp
+});
+
+client.on("guildMemberAdd", async member =>{
+	const chan = member.guild.channels.cache.find(ch => ch.name === "accueil")
+	if(!chan){
+		console.log("ho ho i couldn't find your chan")
+		return
+	}
+	chan.send("Welcome <@"+member.id+">")
 });
 
 client.login(token);
