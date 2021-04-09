@@ -29,7 +29,15 @@ module.exports = {
                         .setTitle(`Upcoming ctf : ${body[0].title}`)
                         .setColor("#36393f")
                         .setDescription(`${body[0].description}`)
-                        .addField(":information_source: Infos",`**Début :** ${start[0]}, Heure : ${start[1]} \n**Fin :** ${end[0]}, Heure ${end[1]} \n**Site :** ${body[0].url} \n**CTF Time URL :** ${body[0].ctftime_url}\n**Format :** ${body[0].format} \n**Durée :** ${body[0].duration.hours} Heures & ${body[0].duration.days} Jours \n**Nombre de participants :** ${body[0].participants} \n**Poids** ${body[0].weight}`)
+                        .addField(":information_source: Infos",
+                        `**Début :** ${start[0]}, Heure : ${start[1]} \n
+                        **Fin :** ${end[0]}, Heure ${end[1]} \n
+                        **Site :** ${body[0].url} \n
+                        **CTF Time URL :** ${body[0].ctftime_url} \n
+                        **Format :** ${body[0].format} \n 
+                        **Durée :** ${body[0].duration.hours} Heures & ${body[0].duration.days} Jours \n 
+                        **Nombre de participants :** ${body[0].participants} \n
+                        **Poids** ${body[0].weight}`)
                         .setThumbnail(body[0].logo)
                     message.channel.send(embed)
             }
