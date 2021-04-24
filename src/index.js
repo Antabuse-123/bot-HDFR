@@ -14,7 +14,9 @@ for (const file of commandFiles) {
 
 const cooldowns = new Discord.Collection();
 
+const url = "https://secu.studio/";
 client.once('ready', () => {
+	client.user.setPresence({activity : {name : "Sécu Studio", type: "STREAMING" , url : url}})
 	console.log('Ready!');
 });
 
