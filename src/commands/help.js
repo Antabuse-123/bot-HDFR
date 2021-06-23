@@ -12,12 +12,15 @@ module.exports = {
 		if (!args.length) {
             const HelpEmbed = new MessageEmbed()
                 .setTitle("**Help**")
-                .setDescription("Voilà la liste de toutes les commandes :");
+                .setDescription("Voilà la liste de toutes les commandes :")
+				.setThumbnail(message.client.user.avatarURL());
                 let s = "";
                 for(const e of commands.map(command => command.name).join(', ')){
                     s +=`${e}`;
                 }
                 HelpEmbed.addField("**Commandes**", s)
+				HelpEmbed.setTimestamp()
+				HelpEmbed.setFooter("Demandé par "+message.author.tag, message.author.avatarURL({dynamic:true}))
 			return message.author.send(HelpEmbed)
 				.then(() => {
 					if (message.channel.type === 'dm') return;

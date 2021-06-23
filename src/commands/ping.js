@@ -1,5 +1,6 @@
 const {MessageEmbed} = require('discord.js');
 const request = require('request')
+const fetch = require('node-fetch')
 module.exports = {
     name : 'ping',
     description : 'Affiche le ping du bot',
@@ -38,8 +39,23 @@ module.exports = {
                         .setColor("#36393f")
                         .addField(":bust_in_silhouette: Propriétaire", `**Organisation:** ${body.org} \n**Internet Service Provider:** ${body.isp} (${body.as})`)
                         .addField(":earth_africa: Localisation", `**Pays:** ${body.country} \n**Ville:** ${body.city}`)
-                        .setFooter("Demandé par "+message.author.tag, message.author.avatarURL({dynamic:true}))
-                    message.channel.send(embed);
+                        .setFooter("Demandé par "+message.author.tag, message.author.avatarURL({dynamic:true}));
+                        
+                        async function ping(query) {
+                            a = Date.now();
+                            try {
+                                await fetch("http://www."+query).then((response) => response.text()).then((text) => console.log("Ping :\n" + text));
+                            } catch (e) {
+                                console.error(e);
+                                console.log("Ping :\nHost unreachable\nrequested by :" + message.author.tag + "\non :" + args[0]);
+                                return;
+                            }
+                            b = Date.now();
+                            return b-a;
+                        }
+                        ping(args[0])
+                        .then((i) => embed.addField("Ping", i +"ms"))
+                        message.channel.send(embed)
                 }
             });
         }

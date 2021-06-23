@@ -45,15 +45,15 @@ module.exports = {
                 if(body.length < max){
                     max = body.length
                 }
-                let embed = new MessageEmbed()
-                    .setTitle("Upcomming CTFs")
-                    .setColor("#36393f")
+                console.log(body)
                 for (let i = 0; i < max; i++) {
                     let start = body[i].start.split('T')
                     let end = body[i].finish.split('T')
                     if (body[i].title == '_EVENT CHANGED_' && i <body.length -1) {
-                        
-                            embed.addField(body[i+1].title + "**event changed**",`${body[i+1].description}`)
+                        let embed = new MessageEmbed()
+                        .setTitle("Upcomming CTFs")
+                        .setColor("#36393f")
+                            embed.setDescription(body[i+1].title + "**event changed**",`${body[i+1].description}`)
                             embed.addField(
                                 ":information_source: Infos",
                                 `**Début :** ${start[0]}, Heure : ${start[1]} \n
@@ -65,11 +65,15 @@ module.exports = {
                                 **Nombre de participants :** ${body[i].participants} \n
                                 **Poids** ${body[i].weight}`
                             )
-                        embed.image(body[i].logo)
+                        embed.setThumbnail(body[i].logo);
+                        message.channel.send(embed);
                         i++;
                     }
                     else{
-                        embed.addField(`**${body[i].title}**`,`${body[i].description}`)
+                        let embed = new MessageEmbed()
+                        .setTitle("Upcomming CTFs")
+                        .setColor("#36393f")
+                        embed.setDescription(`**${body[i].title}**`,`${body[i].description}`)
                         embed.addField(":information_source: Infos",
                             `**Début :** ${start[0]}, Heure : ${start[1]} \n
                             **Fin :** ${end[0]}, Heure ${end[1]} \n
@@ -79,11 +83,11 @@ module.exports = {
                             **Durée :** ${body[i].duration.hours} Heures & ${body[i].duration.days} Jours \n 
                             **Nombre de participants :** ${body[i].participants} \n
                             **Poids** ${body[i].weight}`)
-                        embed.image(body[i].logo)
+                        embed.setThumbnail(body[i].logo);
+                        message.channel.send(embed)
                     }  
                     
                 }
-                message.channel.send(embed)
             }
         })
 	},

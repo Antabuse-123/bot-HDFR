@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const { prefix, token } = require('./config.json');
+const { prefix, token, owner } = require('./config.json');
+const { config } = require('process');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -14,13 +15,13 @@ for (const file of commandFiles) {
 
 const cooldowns = new Discord.Collection();
 
-const url = "https://secu.studio/";
 client.once('ready', () => {
-	client.user.setPresence({activity : {name : "Sécu Studio", type: "STREAMING" , url : url}})
+	client.user.setPresence({activity : {name : "Sécu Studio", type: "STREAMING" , url :"https://www.twitch.tv/secustudio"}})
 	console.log('Ready!');
 });
 
 client.on('message', message => {
+
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
@@ -63,7 +64,7 @@ client.on('message', message => {
 	if (timestamps.has(message.author.id)) {
 		const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
 
-		if (now < expirationTime) {
+		if (now < expirationTime && message.author.id != owner) {
 			const timeLeft = (expirationTime - now) / 1000;
 			return message.reply(`S\'il vous plaît veuillez attendre ${timeLeft.toFixed(1)} secondes avec des réutiliser la commande \`${command.name}\`.`);
 		}
@@ -88,5 +89,4 @@ client.on("guildMemberAdd", async member =>{
 	}
 	chan.send("Welcome <@"+member.id+">")
 });
-
 client.login(token);
