@@ -3,10 +3,10 @@ const {MessageEmbed} = require('discord.js');
 const request = require('request');
 const fetch = require('node-fetch');
 module.exports = {
-	name: 'leaderbard',
-	description: 'Shows the leadear board of ctf Time',
-	aliases: ['ld'],
-	usage: ' ld',
+	name: 'leaderboardfr',
+	description: 'Shows the french learderboard board of ctf Time',
+	aliases: ['ldfr'],
+	usage: ' ldfr',
 	cooldown: 100,
     guildOnly : false,
 	async execute(message) {
@@ -66,7 +66,7 @@ module.exports = {
 					let g = await message.channel.send(msgtop10);
 					master();
 					function master(){
-						const inter = setInterval(tutu,1000)
+						const inter = setInterval(tutu,1500)
 						async function tutu(){
 							if(x < 10){
 								fetch(`https://ctftime.org/api/v1/teams/${ids[x]}/`).then((resp) => resp.text()).then(
@@ -76,7 +76,7 @@ module.exports = {
 											return
 										}
 										json = JSON.parse(json);
-										msgtop10.addField(json.name, "place : " + (ids.indexOf(ids[x-1]) +1))
+										msgtop10.addField(json.name, "Place : " + (ids.indexOf(ids[x-1]) +1))
 										g = await g.edit(msgtop10)
 			
 									},
@@ -94,8 +94,6 @@ module.exports = {
 							x++;
 						}
 					}
-					
-
 					return;
 				},
 				err => 

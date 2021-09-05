@@ -5,16 +5,17 @@ module.exports = {
 	name: 'next-ctf',
 	description: 'shows the date of the next CTF',
 	aliases: ['ctf'],
-	usage: ' next-ctf <nombre optionel>| '+prefix+' ctf <nombre optionel>',
+	usage: ' next-ctf <nombre optionel>| '+prefix+' ctf <nombre entre 1 et 5 optionel>',
 	cooldown: 100,
     guildOnly : false,
 	execute(message, args) {
         //604800000 = one week
-        if(args[0] >5){
-            return message.channel.send("ça fais beaucoup la non?")
+        console.log(args)
+        if(args === []){
+            args.push(1)
         }
-        if(args[0] <0){
-            return message.channel.send("Je suis désolé mais je ne prends pas les nombres négatifs merci")
+        if(args[0][0] >'5' || args[0][0] < '0'){
+            return message.channel.send("Mauvais arguments")
         }
             request(`https://ctftime.org/api/v1/events/?limit=${args[0]}&start=${message.createdTimestamp}&finish=${message.createdTimestamp+604800000}`, function(error, response, body) {
             try{
@@ -45,7 +46,6 @@ module.exports = {
                 if(body.length < max){
                     max = body.length
                 }
-                console.log(body)
                 for (let i = 0; i < max; i++) {
                     let start = body[i].start.split('T')
                     let end = body[i].finish.split('T')
