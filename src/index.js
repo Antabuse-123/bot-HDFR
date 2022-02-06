@@ -1,92 +1,32 @@
 const fs = require('fs');
-const Discord = require('discord.js');
-const { prefix, token, owner } = require('./config.json');
-const { config } = require('process');
+const { Client, Collection, Intents } = require('discord.js');
+const { token } = require('../config.json');
 
-const client = new Discord.Client();
-client.commands = new Discord.Collection();
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+client.commands = new Collection();
+
+
+const commandFiles = fs.readdirSync('src/commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
-	client.commands.set(command.name, command);
+	// Set a new item in the Collection
+	// With the key as the command name and the value as the exported module
+	client.commands.set(command.data.name, command);
+    console.log("Loaded command: " + command.data.name);
 }
 
-const cooldowns = new Discord.Collection();
 
-client.once('ready', () => {
-	client.user.setPresence({activity : {name : "Sécu Studio", type: "STREAMING" , url :"https://www.twitch.tv/secustudio"}})
-	console.log('Ready!');
-});
+const eventFiles = fs.readdirSync('src/events').filter(file => file.endsWith('.js'));
 
-client.on('message', message => {
-
-	if (!message.content.startsWith(prefix) || message.author.bot) return;
-
-	const args = message.content.slice(prefix.length).trim().split(/ +/);
-	const commandName = args.shift().toLowerCase();
-
-	const command = client.commands.get(commandName)
-		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
-
-	if (!command) return;
-
-	if (command.guildOnly && message.channel.type === 'dm') {
-		return message.reply('Je ne peut pas faire cette commande dans vos messages privés!');
+for (const file of eventFiles) {
+	const event = require(`./events/${file}`);
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args));
 	}
+}
 
-	if (command.permissions) {
-		const authorPerms = message.channel.permissionsFor(message.author);
-		if (!authorPerms || !authorPerms.has(command.permissions)) {
-			return message.reply('Vous ne pouvez pas faire ça!');
-		}
-	}
-
-	if (command.args && !args.length) {
-		let reply = `Vous n'avez pas fournis d'aguments, ${message.author}!`;
-
-		if (command.usage) {
-			reply += `\nLa bonne utilisation serais: \`${prefix}${command.name} ${command.usage}\``;
-		}
-
-		return message.channel.send(reply);
-	}
-
-	if (!cooldowns.has(command.name)) {
-		cooldowns.set(command.name, new Discord.Collection());
-	}
-
-	const now = Date.now();
-	const timestamps = cooldowns.get(command.name);
-	const cooldownAmount = (command.cooldown || 3) * 1000;
-
-	if (timestamps.has(message.author.id)) {
-		const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-		if (now < expirationTime && message.author.id != owner) {
-			const timeLeft = (expirationTime - now) / 1000;
-			return message.reply(`S\'il vous plaît veuillez attendre ${timeLeft.toFixed(1)} secondes avec des réutiliser la commande \`${command.name}\`.`);
-		}
-	}
-
-	timestamps.set(message.author.id, now);
-	setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
-	try {
-		command.execute(message, args);
-	} catch (error) {
-		console.error(error);
-		message.reply('Il y a eu une errreur lors de l\'execution de la commande!');
-	}
-});
-
-client.on("guildMemberAdd", async member =>{
-	const chan = member.guild.channels.cache.find(ch => ch.name === "accueil")
-	if(!chan){
-		console.log("ho ho i couldn't find your chan")
-		return
-	}
-	chan.send("Welcome <@"+member.id+">")
-});
-client.login(token);
+client.login(token)

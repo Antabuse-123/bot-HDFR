@@ -1,15 +1,12 @@
-const { prefix } = require('../config.json');
-const {MessageEmbed} = require('discord.js');
-const request = require('request');
+const { SlashCommandBuilder } = require('@discordjs/builders');
 const fetch = require('node-fetch');
+const {MessageEmbed} = require('discord.js');
+
 module.exports = {
-	name: 'leaderboardfr',
-	description: 'Shows the french learderboard board of ctf Time',
-	aliases: ['ldfr'],
-	usage: ' ldfr',
-	cooldown: 100,
-    guildOnly : false,
-	async execute(message) {
+	data: new SlashCommandBuilder()
+		.setName('topctftimefr')
+		.setDescription('Shows the Top 10 of of French teams in CTFTime'),
+	async execute(interaction) {
 		let x = 0
 		//"https://ctftime.org/stats/FR"
 		
@@ -29,10 +26,10 @@ module.exports = {
 					}
 					return top10;
 				},
-				err =>
+				async err =>
 				{
 					console.error(err);
-					message.channel.send("Erreur");
+					await interaction.reply("Error");
 				}
 			).then(
 				top10 => 
@@ -47,48 +44,53 @@ module.exports = {
 									k++;
 									id+=top10[j][k];
 								}
-								ids.push(id);
+								ids.push([id,j+1]);
 							}
 						}
 					}
 					return ids;
 				},
-				err => 
+				async err => 
 				{
 					console.error(err);
-					message.channel.send("Erreur")
+					await interaction.reply("Error")
 				}
 			).then(
 				async ids => {
 					let msgtop10 = new MessageEmbed();
 					msgtop10.setTitle("Top 10 CTF Time FR")
 					msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4")
-					let g = await message.channel.send(msgtop10);
+                    msgtop10.setURL("https://ctftime.org/")
+					await interaction.reply({ embeds: [msgtop10]});
 					master();
 					function master(){
-						const inter = setInterval(tutu,1500)
-						async function tutu(){
+						const inter = setInterval(messageSender,1500)
+						async function messageSender(){
 							if(x < 10){
-								fetch(`https://ctftime.org/api/v1/teams/${ids[x]}/`).then((resp) => resp.text()).then(
+                                let [id,place] = ids[x];
+								fetch(`https://ctftime.org/api/v1/teams/${id}/`).then((resp) => resp.text()).then(
 									async json => {
-										if(json.includes("<html")){
-											console.log("rate limited")
+                                        try{
+                                            json = JSON.parse(json);
+                                        }
+                                        catch(err){
+                                            console.log(err)
+                                            console.log("rate limited")
 											return
-										}
-										json = JSON.parse(json);
-										msgtop10.addField(json.name, "Place : " + (ids.indexOf(ids[x-1]) +1))
-										g = await g.edit(msgtop10)
+                                        }
+										
+										msgtop10.addField(json.name, "Place : " + place)
+										await interaction.editReply({ embeds: [msgtop10]});
 			
 									},
 									err => {
 										console.log(err);
-										message.channel.send("Erreur");
+										interaction.reply("Error");
 										return "";
 									}
 									);
 							}
 							else{
-								message.channel.send("la commande est finie")
 								clearInterval(inter)
 							}
 							x++;
@@ -96,15 +98,13 @@ module.exports = {
 					}
 					return;
 				},
-				err => 
+				async err => 
 				{
 					console.error(err);
-					message.channel.send("Erreur")
+					interaction.reply("Error")
 				}
 
 			)
 	
-		
-
 	},
 };

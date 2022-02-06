@@ -1,94 +1,72 @@
-const { prefix } = require('../config.json');
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const fetch = require('node-fetch'); 
 const {MessageEmbed} = require('discord.js');
-const request = require('request')
+
 module.exports = {
-	name: 'next-ctf',
-	description: 'shows the date of the next CTF',
-	aliases: ['ctf'],
-	usage: ' next-ctf <nombre optionel>| '+prefix+' ctf <nombre entre 1 et 5 optionel>',
-	cooldown: 100,
-    guildOnly : false,
-	execute(message, args) {
-        //604800000 = one week
-        console.log(args)
-        if(args === []){
-            args.push(1)
-        }
-        if(args[0][0] >'5' || args[0][0] < '0'){
-            return message.channel.send("Mauvais arguments")
-        }
-            request(`https://ctftime.org/api/v1/events/?limit=${args[0]}&start=${message.createdTimestamp}&finish=${message.createdTimestamp+604800000}`, function(error, response, body) {
-            try{
-                body = JSON.parse(body)
-            }
-            catch (e)
-            {
-                message.channel.send("Une erreure sauvage apparait... il se peut que le site hors ligne *l'erreure à été enregistrée*")
-                console.log(e)
-                console.log(`${message.author.tag} à fais crash la commande ctf\nargs = ${args}`)
-                return;
-            }
-            console.log("CTF :"+ message.author.tag)
-            
-            if(body == []){
-                let embed = new MessageEmbed()
-                        .setTitle(`Erreur :x:`)
-                        .setColor("RED")
-                        .addField(`il n'y à pas de CTF prévus`)
-                        .setFooter("Demandé par "+message.author.tag, message.author.avatarURL({dynamic:true}))
-                message.channel.send(embed);
-            }
-            else{
-                let max =1
-                if(args.length != 0){
-                    max =args[0]
-                }
-                if(body.length < max){
-                    max = body.length
-                }
-                for (let i = 0; i < max; i++) {
-                    let start = body[i].start.split('T')
-                    let end = body[i].finish.split('T')
-                    if (body[i].title == '_EVENT CHANGED_' && i <body.length -1) {
-                        let embed = new MessageEmbed()
-                        .setTitle("Upcomming CTFs")
-                        .setColor("#36393f")
-                            embed.setDescription(body[i+1].title + "**event changed**",`${body[i+1].description}`)
-                            embed.addField(
-                                ":information_source: Infos",
-                                `**Début :** ${start[0]}, Heure : ${start[1]} \n
-                                **Fin :** ${end[0]}, Heure ${end[1]} \n
-                                **Site :** ${body[i].url} \n
-                                **CTF Time URL :** ${body[i].ctftime_url} \n
-                                **Format :** ${body[i].format} \n 
-                                **Durée :** ${body[i].duration.hours} Heures & ${body[i].duration.days} Jours \n 
-                                **Nombre de participants :** ${body[i].participants} \n
-                                **Poids** ${body[i].weight}`
-                            )
-                        embed.setThumbnail(body[i].logo);
-                        message.channel.send(embed);
-                        i++;
-                    }
-                    else{
-                        let embed = new MessageEmbed()
-                        .setTitle("Upcomming CTFs")
-                        .setColor("#36393f")
-                        embed.setDescription(`**${body[i].title}**`,`${body[i].description}`)
-                        embed.addField(":information_source: Infos",
-                            `**Début :** ${start[0]}, Heure : ${start[1]} \n
-                            **Fin :** ${end[0]}, Heure ${end[1]} \n
-                            **Site :** ${body[i].url} \n
-                            **CTF Time URL :** ${body[i].ctftime_url} \n
-                            **Format :** ${body[i].format} \n 
-                            **Durée :** ${body[i].duration.hours} Heures & ${body[i].duration.days} Jours \n 
-                            **Nombre de participants :** ${body[i].participants} \n
-                            **Poids** ${body[i].weight}`)
-                        embed.setThumbnail(body[i].logo);
-                        message.channel.send(embed)
-                    }  
-                    
-                }
-            }
-        })
-	},
-};
+	data: new SlashCommandBuilder()
+		.setName('nextctf')
+		.setDescription('Shows the Next CTF available in CTFTime')
+		.addIntegerOption(option => option.setName('numberctf').setDescription('Number of CTF to show')),
+	async execute(interaction) {
+		let nbCtf = interaction.options.getInteger('numberctf');
+		if(!nbCtf){
+			nbCtf = 1;
+		}
+		else{
+			nbCtf = nbCtf > 5 ? 5 : nbCtf;
+		}
+		fetch(`https://ctftime.org/api/v1/events/?limit=${nbCtf}&start=${interaction.createdTimestamp}&finish=${interaction.createdTimestamp+604800000}`)
+			.then(
+				response =>{
+					response.json()
+						.then(
+							body => {
+								if(body == []){
+									let embed = new MessageEmbed()
+											.setTitle(`Error :x:`)
+											.setColor("RED")
+											.addField(`There is no CTF in the next 7 days`,`Please try again later`);
+									interaction.reply(embed);
+									return;
+								}
+								nbCtf = nbCtf > body.length ? body.length : nbCtf;
+								let embedArray = [];
+								for(let i = 0; i < nbCtf; i++){
+									let start = body[i].start.split('T')
+                    				let end = body[i].finish.split('T')
+									let embed = new MessageEmbed()
+									.setTitle("Upcomming CTFs")
+									.setColor("#36393f")
+									if (body[i].title == '_EVENT CHANGED_' && i <body.length -1) {
+										embed.setDescription(body[i+1].title + "**event changed**",`${body[i+1].description}`)
+										i++;
+									}
+									else{
+										embed.setDescription(body[i].title,`${body[i].description}`)
+									}		
+									embed.addField(
+										":information_source: Infos",
+										`**Starts on :** ${start[0]}, at : ${start[1]} \n
+										**Ends :** ${end[0]}, at : ${end[1]} \n
+										**Website :** ${body[i].url} \n
+										**CTF Time URL :** ${body[i].ctftime_url} \n
+										**Format :** ${body[i].format} \n 
+										**Duration :** ${body[i].duration.hours} Heures & ${body[i].duration.days} Jours \n 
+										**Number of Teams Interested :** ${body[i].participants} \n
+										**weight** ${body[i].weight}`
+									)
+									embed.setThumbnail(body[i].logo);
+									embedArray.push(embed);
+								}
+								interaction.reply({embeds : embedArray});
+							}
+						)
+				},
+				err => {
+					console.error(err);
+					interaction.reply("CTFTime might be down");
+					return;
+				}
+			)
+    }
+}
