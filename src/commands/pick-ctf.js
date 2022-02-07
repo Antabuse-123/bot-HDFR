@@ -16,9 +16,8 @@ module.exports = {
                     response.json()
                         .then(
                             async body => {
-
-                                let start = body.start.split('T')
-                    			let end = body.finish.split('T')
+                                let start = body.start.split('T');
+                    			let end = body.finish.split('T');
                                 let embed = new MessageEmbed()
                                     .setTitle("Poll for the next CTF")
                                     .setDescription(body.title,`${body.description}`)

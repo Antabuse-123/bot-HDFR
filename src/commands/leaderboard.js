@@ -1,15 +1,14 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
-const fetch = require('node-fetch');
+const fetch = require("node-fetch");
 const {MessageEmbed} = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('topctftimelocal')
-		.setDescription('Shows the Top 10 teams in CTFTime from a given country')
+		.setDescription("Shows the Top 10 teams in CTFTime from a given country")
 		.addStringOption(option => option.setName('locale').setDescription('the country you want to see the top 10 teams (ex: fr, us, ...)')),
 	async execute(interaction) {
-		let x = 0
-		//"https://ctftime.org/stats/FR"
+		let x = 0;
 		let locale = interaction.options.getString('locale');
 		locale = locale.toUpperCase();
 
@@ -25,14 +24,14 @@ module.exports = {
 			.then(
 				text => 
 				{
-					let txtparse = text.split('\n');
+					let txtparse = text.split("\n");
 					let top10 = [];
 					let i = 0;
 					for (const string of txtparse) {
 						if(string.includes('<tr><td class="place">') && i < 10){
 							let str = "";
 							str += string;
-							top10.push(str.trim())
+							top10.push(str.trim());
 							i++;
 						}
 					}
@@ -44,14 +43,14 @@ module.exports = {
 					await interaction.reply("Error");
 				}
 			).then(
-				top10 => 
+				(top10) => 
 				{
 					let ids = [];
 					for(let j = 0; j< top10.length; j++){
 
 						for(let k = 0; k<top10[j].length;k++){
 							if(top10[j][k]<= '9' && top10[j][k]>='0' && top10[j][k-1] == '/'){
-								let id = "" + top10[j][k]
+								let id = "" + top10[j][k];
 								while(top10[j][k+1] != '"'){
 									k++;
 									id+=top10[j][k];
@@ -71,12 +70,11 @@ module.exports = {
 				async ids => {
 					let msgtop10 = new MessageEmbed();
 					msgtop10.setTitle("Top 10 CTF Time Teams from "+locale);
-					msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4")
-                    msgtop10.setURL("https://ctftime.org/")
+					msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4");
+                    msgtop10.setURL("https://ctftime.org/");
 					await interaction.reply({ embeds: [msgtop10]});
-					master();
 					function master(){
-						const inter = setInterval(messageSender,1500)
+						const inter = setInterval(messageSender,1500);
 						async function messageSender(){
 							if(x < 10){
                                 let [id,place] = ids[x];
@@ -86,41 +84,41 @@ module.exports = {
                                             json = JSON.parse(json);
                                         }
                                         catch(err){
-                                            console.log(err)
-                                            console.log("rate limited")
-											return
+                                            console.error(err);
+											return;
                                         }
 										
-										msgtop10.addField(json.name, "Place : " + place)
+										msgtop10.addField(json.name, "Place : " + place);
 										try{
 											await interaction.editReply({ embeds: [msgtop10]});
 										}
 										catch(err){
 											await interaction.reply({ embeds: [msgtop10]});
-											console.log(err)
+											console.error(err);
 										}
 										
 			
 									},
 									async err => {
-										console.log(err);
+										console.error(err);
 										await interaction.reply("Error");
 										return "";
 									}
 									);
 							}
 							else{
-								clearInterval(inter)
+								clearInterval(inter);
 							}
 							x++;
 						}
 					}
+					master();
 					return;
 				},
 				async err => 
 				{
 					console.error(err);
-					interaction.reply("Error")
+					interaction.reply("Error");
 				}
 
 			)

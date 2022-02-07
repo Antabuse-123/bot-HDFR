@@ -14,6 +14,7 @@ module.exports = {
 		}
 		else{
 			nbCtf = nbCtf > 5 ? 5 : nbCtf;
+			nbCtf = nbCtf < 1 ? 1 : nbCtf;
 		}
 		fetch(`https://ctftime.org/api/v1/events/?limit=${nbCtf}&start=${interaction.createdTimestamp}&finish=${interaction.createdTimestamp+604800000}`)
 			.then(
@@ -21,7 +22,7 @@ module.exports = {
 					response.json()
 						.then(
 							async body => {
-								if(body == []){
+								if(body === []){
 									let embed = new MessageEmbed()
 											.setTitle(`Error :x:`)
 											.setColor("RED")
@@ -32,17 +33,17 @@ module.exports = {
 								nbCtf = nbCtf > body.length ? body.length : nbCtf;
 								let embedArray = [];
 								for(let i = 0; i < nbCtf; i++){
-									let start = body[i].start.split('T')
-                    				let end = body[i].finish.split('T')
+									let start = body[i].start.split("T");
+                    				let end = body[i].finish.split("T");
 									let embed = new MessageEmbed()
 									.setTitle("Upcomming CTFs")
-									.setColor("#36393f")
+									.setColor("#36393f");
 									if (body[i].title == '_EVENT CHANGED_' && i <body.length -1) {
-										embed.setDescription(body[i+1].title + "**event changed**",`${body[i+1].description}`)
+										embed.setDescription(body[i+1].title + "**event changed**",`${body[i+1].description}`);
 										i++;
 									}
 									else{
-										embed.setDescription(body[i].title,`${body[i].description}`)
+										embed.setDescription(body[i].title,`${body[i].description}`);
 									}		
 									embed.addField(
 										":information_source: Infos",
@@ -57,7 +58,7 @@ module.exports = {
 										**Number of Teams Interested :** ${body[i].participants} \n
 										**Weight** ${body[i].weight} \n
 										**CTF ID :** ${body[i].id}`
-									)
+									);
 									embed.setThumbnail(body[i].logo);
 									embedArray.push(embed);
 								}
@@ -76,4 +77,4 @@ module.exports = {
 				}
 			)
     }
-}
+};

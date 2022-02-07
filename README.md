@@ -17,9 +17,9 @@ This is yet another discord bot. This ons has been created for the discord serve
 
 Being a bot for a CTF team he has obviously some CTF specific features.
 
-- Pulling the 5 next CTF for the week to come
-- Pulling the Top 10 of best Teams from a certain country
-- Create a vote for the next CTF to do
+-  Pulling the 5 next CTF for the week to come
+-  Pulling the Top 10 of best Teams from a certain country
+-  Create a vote for the next CTF to do
 
 ## Setup
 
@@ -36,13 +36,13 @@ Then you will have to fill the config file according to the template.
 
 Once this is done you will have to register the commands two options:
 
-- If the bot is on one unique server run :
+-  If the bot is on one unique server run :
 
 ```bash
 npm run local
 ```
 
-- If the bot is on multiple servers run :
+-  If the bot is on multiple servers run :
 
 ```bash
 npm run prod
@@ -62,8 +62,8 @@ Feel free to contribute to this bot.
 
 #### By doing a pull request
 
-- Fork the repository
-- Commit your changes
-- Open a pull request
+-  Fork the repository
+-  Commit your changes
+-  Open a pull request
 
 #### By creating an issue
