@@ -4,13 +4,25 @@ const {MessageEmbed} = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('topctftimefr')
-		.setDescription('Shows the Top 10 of of French teams in CTFTime'),
+		.setName('topctftimelocal')
+		.setDescription('Shows the Top 10 teams in CTFTime from a given country')
+		.addStringOption(option => option.setName('locale').setDescription('the country you want to see the top 10 teams (ex: fr, us, ...)')),
 	async execute(interaction) {
 		let x = 0
 		//"https://ctftime.org/stats/FR"
-		
-		fetch('https://ctftime.org/stats/FR').then((response) => response.text()).then(
+		let locale = interaction.options.getString('locale');
+		locale = locale.toUpperCase();
+
+		fetch('https://ctftime.org/stats/'+locale)
+		.then(
+			response => response.text(),
+			async err => {
+				console.error(err);
+				await interaction.reply("Error while fetching the CTF make sure that the locale is correct");
+				return;
+			}
+			)
+			.then(
 				text => 
 				{
 					let txtparse = text.split('\n');
@@ -58,7 +70,7 @@ module.exports = {
 			).then(
 				async ids => {
 					let msgtop10 = new MessageEmbed();
-					msgtop10.setTitle("Top 10 CTF Time FR")
+					msgtop10.setTitle("Top 10 CTF Time Teams from "+locale);
 					msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4")
                     msgtop10.setURL("https://ctftime.org/")
 					await interaction.reply({ embeds: [msgtop10]});
@@ -83,9 +95,9 @@ module.exports = {
 										await interaction.editReply({ embeds: [msgtop10]});
 			
 									},
-									err => {
+									async err => {
 										console.log(err);
-										interaction.reply("Error");
+										await interaction.reply("Error");
 										return "";
 									}
 									);

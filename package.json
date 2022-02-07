@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/Antabuse-does-something/bot-secu#readme",
   "dependencies": {
+    "@devsnowflake/quick.db": "^2.0.3",
     "@discordjs/builders": "^0.12.0",
     "@discordjs/rest": "^0.3.0",
     "discord-api-types": "^0.26.1",

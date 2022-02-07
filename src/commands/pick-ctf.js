@@ -1,0 +1,71 @@
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const fetch = require('node-fetch');
+const {MessageEmbed} = require('discord.js');
+
+module.exports = {
+	data: new SlashCommandBuilder()
+		.setName('pickctf')
+		.setDescription('Choose a CTF from CTF time and create an event and stores it in the database')
+		.addIntegerOption(option => option.setName('id').setDescription('the id of the CTF').setRequired(true)),
+	async execute(interaction) {
+        //Checking for the permission
+        let id = interaction.options.getInteger('id');
+        fetch(`https://ctftime.org/api/v1/events/${id}/`)
+            .then(
+                response => {
+                    response.json()
+                        .then(
+                            async body => {
+
+                                let start = body.start.split('T')
+                    			let end = body.finish.split('T')
+                                let embed = new MessageEmbed()
+                                    .setTitle("Poll for the next CTF")
+                                    .setDescription(body.title,`${body.description}`)
+                                    .setColor('#36393f')
+                                    .addField(
+										":information_source: Infos",
+										`**Starts on :** ${start[0]}, at : ${start[1]} \n
+										**Host by :** ${body.organizers.name} \n
+										**Ends :** ${end[0]}, at : ${end[1]} \n
+										**Website :** ${body.url} \n
+										**CTF Time URL :** ${body.ctftime_url} \n
+										**IRL CTF ? :** ${body.onsite} \n
+										**Format :** ${body.format} \n 
+										**Duration :** ${body.duration.hours} Heures & ${body.duration.days} Jours \n 
+										**Number of Teams Interested :** ${body.participants} \n
+										**Weight** ${body.weight} \n
+										**CTF ID :** ${body.id}`
+									)
+                                    .setThumbnail(body.logo);
+                                await interaction.reply({embeds: [embed]});
+                                const msg = await interaction.fetchReply();
+                                msg.react('✅').then(() => msg.react('❌'));
+                                const reactionArray = ['✅', '❌'];
+                                async function vote(){
+                                    interaction.fetchReply().then(async msg => {
+                                        let count = [];
+                                        for(let i = 0; i < reactionArray.length; i++){
+                                            count[i] = msg.reactions.cache.get(reactionArray[i]).count -1; // Removes the bot's vote
+                                        }
+                                        let nbVote = count[0] + count[1];
+                                        let embed = new MessageEmbed()
+                                            .setTitle("Results of the poll")
+                                            .setDescription(`The poll has ended, the results are :`)
+                                            .addField("Stats : ",`✅ : ${100 * count[0] / nbVote}% \n ❌ : ${100 * count[1] / nbVote}% \n Number of votes : ${nbVote}`)
+                                            .setThumbnail(body.logo);
+                                        await interaction.followUp({embeds: [embed]});
+                                    })
+
+                                }
+                                setTimeout(vote, 24 * 60000);
+                            }
+                        )
+                },
+                async err => {
+                    console.error(err);
+                    await interaction.reply("Error while fetching the CTF make sure the id is correct");
+                    return;
+                })
+    }
+};
