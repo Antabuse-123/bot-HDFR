@@ -3,7 +3,7 @@ module.exports = {
     async execute(interaction){
         if (!interaction.isCommand()) return;
     	const command = interaction.client.commands.get(interaction.commandName);
-        console.log(`Command ${interaction.commandName} was used in ${interaction.guild.name}`);
+        console.log(`Command ${interaction.commandName} was used in ${interaction.guild.name} by ${interaction.user.tag}`);
     	if (!command){
             interaction.reply({ content: 'Command not found', ephemeral: true });
             return;

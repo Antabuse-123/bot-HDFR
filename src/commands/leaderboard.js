@@ -92,7 +92,14 @@ module.exports = {
                                         }
 										
 										msgtop10.addField(json.name, "Place : " + place)
-										await interaction.editReply({ embeds: [msgtop10]});
+										try{
+											await interaction.editReply({ embeds: [msgtop10]});
+										}
+										catch(err){
+											await interaction.reply({ embeds: [msgtop10]});
+											console.log(err)
+										}
+										
 			
 									},
 									async err => {
