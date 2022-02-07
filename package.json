@@ -4,7 +4,7 @@
   "description": "Bot for the HDFR Server",
   "main": "src/index.js",
   "scripts": {
-    "test": "node src/register-local.js",
+    "local": "node src/register-local.js",
     "prod": "node src/register-global.js",
     "start": "node src/index.js"
   },
