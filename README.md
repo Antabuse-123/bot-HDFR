@@ -23,7 +23,7 @@ Being a bot for a CTF team he has obviously some CTF specific features.
 
 ## Setup
 
-You will need at least Node.js Version 16.9.x or higher. 
+You will need at least Node.js Version 16.9.x or higher.
 
 ```bash
 git clone https://github.com/Antabuse-does-something/bot-HDFR.git
