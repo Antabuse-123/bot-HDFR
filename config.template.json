@@ -2,5 +2,6 @@
     "token": "token goes here",
     "ownerId": "owner id goes here",
     "guildId": "guild id goes here",
-    "clientId": "client id goes here"
+    "clientId": "client id goes here",
+    "rootMeApiKey": "root me api key goes here"
 }

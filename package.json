@@ -13,7 +13,7 @@
     "url": "git+https://github.com/Antabuse-does-something/bot-secu.git"
   },
   "author": "Antabuse",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/Antabuse-does-something/bot-secu/issues"
   },
