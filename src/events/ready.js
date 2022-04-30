@@ -47,6 +47,6 @@ module.exports = {
 			}
 			console.log("Ended worked")
 		}
-		setInterval(worker, 1000 * 10);
+		setInterval(worker, 1000 * 60 * 60);
 	},
 };
