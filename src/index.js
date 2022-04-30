@@ -1,8 +1,12 @@
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('../config.json');
+const Sequelize = require("sequelize")
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
+
+
+
 
 client.commands = new Collection();
 

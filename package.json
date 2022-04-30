@@ -23,6 +23,9 @@
     "@discordjs/builders": "^0.12.0",
     "@discordjs/rest": "^0.3.0",
     "discord-api-types": "^0.26.1",
-    "discord.js": "^13.6.0"
+    "discord.js": "^13.6.0",
+    "root-me-api-wrapper": "^1.1.4",
+    "sequelize": "^6.19.0",
+    "sqlite3": "^5.0.6"
   }
 }

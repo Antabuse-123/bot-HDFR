@@ -27,7 +27,7 @@ module.exports = {
 											.setTitle(`Error :x:`)
 											.setColor("RED")
 											.addField(`There is no CTF in the next 7 days`,`Please try again later`);
-									await interaction.reply(embed);
+									await interaction.reply({embeds : [embed]});
 									return;
 								}
 								nbCtf = nbCtf > body.length ? body.length : nbCtf;

@@ -6,7 +6,7 @@ module.exports = {
     	if (!command){
             interaction.reply({ content: "Command not found", ephemeral: true });
             return;
-        };
+        }
         if(!interaction.guild){
             console.log(`Command ${interaction.commandName} was used in DM by ${interaction.user.tag}`);
             await interaction.reply("I can't execute command in DMs for now");
