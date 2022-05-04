@@ -19,6 +19,7 @@ module.exports = {
 			let tmp = await Users_db.findAll({attributes : ["id"]});
 			let ids = tmp.map(user=> user.id);
 			for(let id of ids){
+				await new Promise(f => setTimeout(f, 500));
 				let nuser = await rmclient.getUser(id);
 				if(nuser.getId() === -1){
 					continue;
