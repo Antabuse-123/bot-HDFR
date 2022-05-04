@@ -13,7 +13,7 @@ module.exports = {
 		Users_db.sync()
 		// runs a code in a thread
 		async function worker(){
-			console.log("Started Worker")
+			console.log("Started Worker at " + new Date().toLocaleString());
 			let rmclient = new Client(rootMeApiKey);
 			
 			let tmp = await Users_db.findAll({attributes : ["id"]});
@@ -45,7 +45,7 @@ module.exports = {
 					}
 				}
 			}
-			console.log("Ended worked")
+			console.log("Ended worked at " + new Date().toLocaleString());
 		}
 		setInterval(worker, 1000 * 60 * 60);
 	},

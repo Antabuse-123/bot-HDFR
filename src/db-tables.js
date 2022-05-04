@@ -21,6 +21,6 @@ module.exports = {
 		title : Sequelize.STRING,
 		solve: Sequelize.ARRAY(Sequelize.INTEGER),
 		score: Sequelize.INTEGER,
-		challenges: Sequelize.INTEGER
+		challenges: Sequelize.ARRAY(Sequelize.INTEGER)
 	})
 };

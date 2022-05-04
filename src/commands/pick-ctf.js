@@ -10,6 +10,9 @@ module.exports = {
 	async execute(interaction) {
         //Checking for the permission
         let id = interaction.options.getInteger('id');
+        if(!id){
+            return interaction.reply("Please specify a CTF id");
+        }
         fetch(`https://ctftime.org/api/v1/events/${id}/`)
             .then(
                 response => {
@@ -57,7 +60,7 @@ module.exports = {
                                     })
 
                                 }
-                                setTimeout(vote, 24 * 60000);
+                                setTimeout(vote, 24 * 60 * 60 * 1000);
                             }
                         )
                 },

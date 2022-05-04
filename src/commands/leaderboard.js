@@ -10,8 +10,10 @@ module.exports = {
 	async execute(interaction) {
 		let x = 0;
 		let locale = interaction.options.getString('locale');
+		if(!locale){
+			return interaction.reply("Please specify a locale");
+		}
 		locale = locale.toUpperCase();
-
 		fetch('https://ctftime.org/stats/'+locale)
 		.then(
 			response => response.text(),
@@ -72,7 +74,7 @@ module.exports = {
 					msgtop10.setTitle("Top 10 CTF Time Teams from "+locale);
 					msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4");
                     msgtop10.setURL("https://ctftime.org/");
-					await interaction.reply({ embeds: [msgtop10]});
+					interaction.reply({ embeds: [msgtop10]});
 					function master(){
 						const inter = setInterval(messageSender,1500);
 						async function messageSender(){
