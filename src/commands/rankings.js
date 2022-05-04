@@ -16,10 +16,12 @@ module.exports = {
 		scoreboard.sort((a,b)=> b[1] - a[1]);
 		let embed = new MessageEmbed()
 		.setTitle("Scoreboard")
+		let description = "";
 		for (let index = 0; index < scoreboard.length; index++) {
 			const element = scoreboard[index];
-			embed.addField(`${element[0]}`, `${element[1]}`)
+			description += `**${index+1}** : ${element[0]} --> ${element[1]} points\n`;
 		}
+		embed.setDescription(description);
 		return interaction.reply({embeds: [embed]})
 	}
 };
