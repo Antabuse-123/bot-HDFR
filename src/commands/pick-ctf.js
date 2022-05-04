@@ -5,7 +5,7 @@ const {MessageEmbed} = require('discord.js');
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('pickctf')
-		.setDescription('Choose a CTF from CTF time and create an event and stores it in the database')
+		.setDescription('Choose a CTF from CTF time and create a pool to see who is interested in it')
 		.addIntegerOption(option => option.setName('id').setDescription('the id of the CTF').setRequired(true)),
 	async execute(interaction) {
         //Checking for the permission

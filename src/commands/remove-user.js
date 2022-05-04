@@ -6,8 +6,8 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('deleteuser')
 		.setDescription('delete a user from the DB')
-		.addIntegerOption(option => option.setName('id').setDescription('Your Root me ID'))
-		.addStringOption(option => option.setName("name").setDescription("Your Root-me name")),
+		.addIntegerOption(option => option.setName('id').setDescription('The Root me ID of the user to delete'))
+		.addStringOption(option => option.setName("name").setDescription("Your Root-me name of the user to delete")),
 	async execute(interaction) {
         if(!interaction.options.getInteger("id") && !interaction.options.getString("name")){
 			return await interaction.reply("You should give your Root-me id or or your Root-mr name");

@@ -7,7 +7,7 @@ const { Users_db } = require("../db-tables");
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('scoreboard')
-		.setDescription('scoreboard of the server'),
+		.setDescription('The scoreboard of the bests Root me users in the DB'),
 	async execute(interaction) {
         let users = await Users_db.findAll({attributes : ["name", "score"]});
 		let scoreboard = [];
