@@ -45,7 +45,7 @@ npm run local
 -  If the bot is on multiple servers run :
 
 ```bash
-npm run prod
+npm run global
 ```
 
 Once this is done you just have to start the bot with :

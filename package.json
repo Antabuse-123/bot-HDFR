@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "local": "node src/register-local.js",
-    "prod": "node src/register-global.js",
+    "global": "node src/register-global.js",
     "start": "node src/index.js"
   },
   "repository": {
