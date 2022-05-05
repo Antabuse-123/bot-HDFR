@@ -10,7 +10,7 @@ module.exports = {
 	async execute(client) {
 		console.log(`Ready! Logged in as ${client.user.tag}`);
 		client.user.setActivity("Watching for new CTFs");
-		Users_db.sync()
+		Users_db.sync();
 		// runs a code in a thread
 		async function worker(){
 			console.log("Started Worker at " + new Date().toLocaleString());
