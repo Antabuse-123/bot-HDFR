@@ -12,7 +12,6 @@ module.exports = {
 		client.user.setActivity("Watching for new CTFs");
 		Users_db.sync()
 		// runs a code in a thread
-		setInterval(worker, 1000 * 60 * 60);
 		async function worker(){
 			console.log("Started Worker at " + new Date().toLocaleString());
 			let rmclient = new Client(rootMeApiKey);
@@ -36,7 +35,7 @@ module.exports = {
 						embed.setColor("#00ff00");
 						let affectedrow = await Users_db.update({
 							score: nuser.getScore(),
-							solved: nuser.getSolve().toString(),
+							solve: nuser.getSolve(),
 							rank: nuser.getRank(),
 							title: nuser.getTitle(),
 						}, {where: {id: id}});
@@ -53,8 +52,9 @@ module.exports = {
 					}
 				}
 			}
-			console.log("Ended worked at " + new Date().toLocaleString());
+			console.log("Ended worker at " + new Date().toLocaleString());
 		}
+		setInterval(worker, 1000 * 30);
 		
 	},
 };
