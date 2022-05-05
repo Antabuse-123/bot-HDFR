@@ -12,6 +12,7 @@ module.exports = {
 		client.user.setActivity("Watching for new CTFs");
 		Users_db.sync()
 		// runs a code in a thread
+		setInterval(worker, 1000 * 60 * 60);
 		async function worker(){
 			console.log("Started Worker at " + new Date().toLocaleString());
 			let rmclient = new Client(rootMeApiKey);
@@ -33,21 +34,27 @@ module.exports = {
 						embed.setDescription(`${nuser.getName()} solved : ${chall.getTitle()}`);
 						embed.addField("New Score", `${nuser.getScore()}`);
 						embed.setColor("#00ff00");
-						await Users_db.update({ 
+						let affectedrow = await Users_db.update({
 							score: nuser.getScore(),
-							solved: nuser.getSolve(),
+							solved: nuser.getSolve().toString(),
 							rank: nuser.getRank(),
 							title: nuser.getTitle(),
 						}, {where: {id: id}});
-						let channel = client.channels.cache.get(announceChannelId);
-						if(channel){
-							await channel.send({embeds : [embed]});
+						if (!(affectedrow > 0)) {
+							console.error(`Failed to update user ${id} (name ${nuser.getName()})`);
 						}
+						else{
+							let channel = client.channels.cache.get(announceChannelId);
+							if(channel){
+								await channel.send({embeds : [embed]});
+							}
+						}
+						
 					}
 				}
 			}
 			console.log("Ended worked at " + new Date().toLocaleString());
 		}
-		setInterval(worker, 1000 * 60 * 60);
+		
 	},
 };
