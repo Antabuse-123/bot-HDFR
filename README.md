@@ -36,13 +36,13 @@ Then you will have to fill the config file according to the template.
 
 Once this is done you will have to register the commands two options:
 
--  If the bot is on one unique server run :
+-  If the bot has one unique server run :
 
 ```bash
 npm run local
 ```
 
--  If the bot is on multiple servers run :
+-  If the bot has multiple servers run :
 
 ```bash
 npm run global
