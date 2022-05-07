@@ -30,7 +30,7 @@ module.exports = {
 						let chall = await rmclient.getChallenge(solved);
 						let embed = new MessageEmbed();
 						embed.setTitle("New challenge solved!");
-						embed.setDescription(`${nuser.getName()} solved : ${chall.getTitle()}`);
+						embed.addField(`${nuser.getName()} solved :`,` ${chall.getTitle()}`);
 						embed.addField("New Score", `${nuser.getScore()}`);
 						embed.setColor("#00ff00");
 						let users = await Users_db.findAll({attributes : ["name", "score"]});
@@ -42,7 +42,7 @@ module.exports = {
 						if(next !== -1){
 							next--;
 						}
-						embed.addField(`${scoreboard[next][1] - scoreboard[next +1][1]} to overtake : ${scoreboard[next][0]}`);
+						embed.setDescription(`${scoreboard[next][1] - scoreboard[next +1][1]} to overtake : ${scoreboard[next][0]}`);
 						let affectedrow = await Users_db.update({
 							score: nuser.getScore(),
 							solve: nuser.getSolve(),
