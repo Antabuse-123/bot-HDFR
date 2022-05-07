@@ -30,9 +30,15 @@ module.exports = {
 						let chall = await rmclient.getChallenge(solved);
 						let embed = new MessageEmbed();
 						embed.setTitle("New challenge solved!");
-						embed.addField(`${nuser.getName()} solved :`,` ${chall.getTitle()}`);
-						embed.addField("New Score", `${nuser.getScore()}`);
+						embed.setDescription(`${nuser.getName()} solved :${chall.getTitle()}`);
+						embed.addField("New Score", `${user.score + chall.getScore()}`);
 						embed.setColor("#00ff00");
+						let affectedrow = await Users_db.update({
+							score: nuser.getScore(),
+							solve: nuser.getSolve(),
+							rank: nuser.getRank(),
+							title: nuser.getTitle(),
+						}, {where: {id: id}});
 						let users = await Users_db.findAll({attributes : ["name", "score"]});
 						let scoreboard = [];
 						users.map(user=> scoreboard.push([user.name,user.score]));
@@ -42,13 +48,7 @@ module.exports = {
 						if(next !== -1){
 							next--;
 						}
-						embed.setDescription(`${scoreboard[next][1] - scoreboard[next +1][1]} to overtake : ${scoreboard[next][0]}`);
-						let affectedrow = await Users_db.update({
-							score: nuser.getScore(),
-							solve: nuser.getSolve(),
-							rank: nuser.getRank(),
-							title: nuser.getTitle(),
-						}, {where: {id: id}});
+						embed.setFooter({text : `${scoreboard[next][1] - scoreboard[next +1][1]} to overtake : ${scoreboard[next][0]}`});
 						if (!(affectedrow > 0)) {
 							console.error(`Failed to update user ${id} (name ${nuser.getName()})`);
 						}
@@ -64,7 +64,7 @@ module.exports = {
 			}
 			console.log("Ended worker at " + new Date().toLocaleString());
 		}
-		setInterval(worker, 1000 * 60 * 60);
+		setInterval(worker, 1000 * 60 * 5);
 		
 	},
 };
