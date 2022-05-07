@@ -4,7 +4,7 @@ const {MessageEmbed} = require('discord.js');
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('topctftimelocal')
+		.setName('topctftimelocale')
 		.setDescription("Show the Top 10 teams in CTFTime from a given country")
 		.addStringOption(option => option.setName('locale').setDescription('the country you want to see the top 10 teams (ex: fr, us, ...)')),
 	async execute(interaction) {
@@ -66,7 +66,7 @@ module.exports = {
 				async err => 
 				{
 					console.error(err);
-					await interaction.reply("Error")
+					await interaction.editReply("Error")
 				}
 			).then(
 				async ids => {

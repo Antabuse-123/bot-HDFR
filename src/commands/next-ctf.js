@@ -16,6 +16,7 @@ module.exports = {
 			nbCtf = nbCtf > 5 ? 5 : nbCtf;
 			nbCtf = nbCtf < 1 ? 1 : nbCtf;
 		}
+		await interaction.reply("Fetching the CTF...");
 		fetch(`https://ctftime.org/api/v1/events/?limit=${nbCtf}&start=${interaction.createdTimestamp}&finish=${interaction.createdTimestamp+604800000}`)
 			.then(
 				response =>{
@@ -62,17 +63,17 @@ module.exports = {
 									embed.setThumbnail(body[i].logo);
 									embedArray.push(embed);
 								}
-								await interaction.reply({embeds : embedArray});
+								await interaction.editReply({embeds : embedArray});
 							},
 							async err => {
-								await interaction.reply(`Error while parsing the JSON`);
+								await interaction.editReply(`Error while parsing the JSON`);
 								console.log(err);
 							}
 						)
 				},
 				async err => {
 					console.error(err);
-					await interaction.reply("CTFTime might be down");
+					await interaction.editReply("CTFTime might be down");
 					return;
 				}
 			)
