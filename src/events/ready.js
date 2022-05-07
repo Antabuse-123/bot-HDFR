@@ -38,7 +38,6 @@ module.exports = {
 						users.map(user=> scoreboard.push([user.name,user.score]));
 						//sort the array
 						scoreboard.sort((a,b)=> b[1] - a[1]);
-						let description = "";
 						let next = scoreboard.findIndex(e => e[0] === nuser.getName());
 						if(next !== -1){
 							next--;
