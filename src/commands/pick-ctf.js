@@ -13,6 +13,7 @@ module.exports = {
         if(!id){
             return interaction.reply("Please specify a CTF id");
         }
+        await interaction.deferReply();
         fetch(`https://ctftime.org/api/v1/events/${id}/`)
             .then(
                 response => {
@@ -40,7 +41,7 @@ module.exports = {
 										**CTF ID :** ${body.id}`
 									)
                                     .setThumbnail(body.logo);
-                                await interaction.reply({embeds: [embed]});
+                                await interaction.editReply({embeds: [embed]});
                                 const msg = await interaction.fetchReply();
                                 msg.react('✅').then(() => msg.react('❌'));
                                 const reactionArray = ['✅', '❌'];
@@ -66,7 +67,7 @@ module.exports = {
                 },
                 async err => {
                     console.error(err);
-                    await interaction.reply("Error while fetching the CTF make sure the id is correct");
+                    await interaction.editReply("Error while fetching the CTF make sure the id is correct");
                     return;
                 })
     }

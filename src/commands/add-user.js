@@ -16,8 +16,8 @@ module.exports = {
             return await interaction.reply("You need to provide either your Root me ID or your Root me name!");
         }
         const client = new Client(rootMeApiKey);
+        let date = Date.now();
         async function add_user(user_id){
-            let date = Date.now();
             client.getUser(user_id).then(async user => {
                 if(user.getId() === -1){
                     await interaction.editReply("Error while gathering the information, make sure this id is correct");
@@ -46,18 +46,19 @@ module.exports = {
                 embed.addField("total time :", ""+total_time+" s");
                 await interaction.editReply({embeds : [embed]});
             },
-            err => {
-                interaction.editReply("A wild error occurs")
+            async err => {
+                await interaction.editReply("A wild error occurs")
                 console.error(err);
                 return;
             });
         }
+        await interaction.deferReply();
         if(interaction.options.getInteger('id')) {
             const id = interaction.options.getInteger('id');
             if(await Users_db.findOne({where: {id: id}})){
-                return await interaction.reply("User already in the database");
+                return await interaction.editReply("User already in the database");
             }
-            await interaction.reply("Gathering the info about the user")
+            await interaction.editReply("Gathering the info about the user")
             add_user(id);
             return;
         }
@@ -65,11 +66,11 @@ module.exports = {
             const name = interaction.options.getString('name');
             let userArray = await client.getUserByName(name);
             if(userArray.length === 1){
-                let id = userArray[0][0];
+                const id = userArray[0][0];
                 if(await Users_db.findOne({where: {id: id}})){
-                    return await interaction.reply("User already in the database")
+                    return await interaction.editReply("User already in the database")
                 }
-                await interaction.reply("Gathering the info about the user"); 
+                await interaction.editReply("Gathering the info about the user"); 
                 add_user(id);
                 return;
             }
@@ -78,7 +79,7 @@ module.exports = {
             for(let i =  0; i < userArray.length; i++){
                 embed.addField("user :",`${userArray[i][1]} id : ${userArray[i][0]}`)
             }
-            return await interaction.reply({embeds : [embed]});
+            return await interaction.editReply({embeds : [embed]});
         }
 
     }

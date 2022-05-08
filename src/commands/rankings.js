@@ -9,6 +9,7 @@ module.exports = {
 		.setName('scoreboard')
 		.setDescription('The scoreboard of the bests Root me users in the DB'),
 	async execute(interaction) {
+		await interaction.deferReply();
         let users = await Users_db.findAll({attributes : ["name", "score"]});
 		let scoreboard = [];
 		users.map(user=> scoreboard.push([user.name,user.score]));
@@ -22,6 +23,6 @@ module.exports = {
 			description += `**${index+1}** : ${element[0]} --> ${element[1]} points\n`;
 		}
 		embed.setDescription(description);
-		return interaction.reply({embeds: [embed]})
+		return interaction.editReply({embeds: [embed]})
 	}
 };

@@ -11,15 +11,16 @@ module.exports = {
 		let x = 0;
 		let locale = interaction.options.getString('locale');
 		if(!locale){
-			return interaction.reply("Please specify a locale");
+			return await interaction.reply("Please specify a locale");
 		}
+		await interaction.deferReply();
 		locale = locale.toUpperCase();
 		fetch('https://ctftime.org/stats/'+locale)
 		.then(
 			response => response.text(),
 			async err => {
 				console.error(err);
-				await interaction.reply("Error while fetching the CTF make sure that the locale is correct");
+				await interaction.editReply("Error while fetching the CTF make sure that the locale is correct");
 				return;
 			}
 			)
@@ -42,7 +43,7 @@ module.exports = {
 				async err =>
 				{
 					console.error(err);
-					await interaction.reply("Error");
+					await interaction.editReply("Error");
 				}
 			).then(
 				(top10) => 
@@ -74,7 +75,7 @@ module.exports = {
 					msgtop10.setTitle("Top 10 CTF Time Teams from "+locale);
 					msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4");
                     msgtop10.setURL("https://ctftime.org/");
-					interaction.reply({ embeds: [msgtop10]});
+					interaction.editReply({ embeds: [msgtop10]});
 					function master(){
 						const inter = setInterval(messageSender,1500);
 						async function messageSender(){
@@ -95,7 +96,7 @@ module.exports = {
 											await interaction.editReply({ embeds: [msgtop10]});
 										}
 										catch(err){
-											await interaction.reply({ embeds: [msgtop10]});
+											await interaction.editReply({ embeds: [msgtop10]});
 											console.error(err);
 										}
 										
@@ -103,7 +104,7 @@ module.exports = {
 									},
 									async err => {
 										console.error(err);
-										await interaction.reply("Error");
+										await interaction.editReply("Error");
 										return "";
 									}
 									);
@@ -120,7 +121,7 @@ module.exports = {
 				async err => 
 				{
 					console.error(err);
-					interaction.reply("Error");
+					interaction.editReply("Error");
 				}
 
 			)
