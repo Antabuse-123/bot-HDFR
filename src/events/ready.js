@@ -31,7 +31,7 @@ module.exports = {
 						let embed = new MessageEmbed();
 						embed.setTitle("New challenge solved!");
 						embed.setDescription(`${nuser.getName()} solved :${chall.getTitle()}`);
-						embed.addField("New Score", `${user.score + chall.getScore()}`);
+						embed.addField("New Score", `${user.score + chall.getPoints()}`);
 						embed.setColor("#00ff00");
 						let affectedrow = await Users_db.update({
 							score: nuser.getScore(),
