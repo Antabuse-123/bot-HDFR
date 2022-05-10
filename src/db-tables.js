@@ -8,6 +8,7 @@ const sequelize = new Sequelize('database', 'user', 'password', {
 	storage: 'database.sqlite',
 });
 
+// Export the DB to access it all across the project
 module.exports = {
 
 	Users_db : sequelize.define('users', {

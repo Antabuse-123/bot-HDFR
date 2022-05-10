@@ -9,14 +9,17 @@ module.exports = {
 		.addIntegerOption(option => option.setName('numberctf').setDescription('Number of CTF to show')),
 	async execute(interaction) {
 		let nbCtf = interaction.options.getInteger('numberctf');
+		// if no arguments has been provided sets it to 1
 		if(!nbCtf){
 			nbCtf = 1;
 		}
+		// basic sanatize of te argument
 		else{
 			nbCtf = nbCtf > 5 ? 5 : nbCtf;
 			nbCtf = nbCtf < 1 ? 1 : nbCtf;
 		}
 		await interaction.reply("Fetching the CTF...");
+		// Get the nbCtf for a delay of a week
 		fetch(`https://ctftime.org/api/v1/events/?limit=${nbCtf}&start=${interaction.createdTimestamp}&finish=${interaction.createdTimestamp+604800000}`)
 			.then(
 				response =>{

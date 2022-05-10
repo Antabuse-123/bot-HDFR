@@ -87,7 +87,7 @@ module.exports = {
 			console.log("Ended worker at " + new Date().toLocaleString());
 		}
 		// Start the worker
-		setInterval(worker, 1000 * 60 *20);
+		setInterval(worker, 1000 * 60 * 20);
 		
 	},
 };

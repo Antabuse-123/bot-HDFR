@@ -3,14 +3,12 @@ const { Client, Collection, Intents } = require('discord.js');
 const { token } = require('../config.json');
 const Sequelize = require("sequelize")
 
+// Create a new discord Client
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
-
-
-
-
+// Create a new collection of commands
 client.commands = new Collection();
 
-
+// Gathering command files
 const commandFiles = fs.readdirSync('src/commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
@@ -21,9 +19,10 @@ for (const file of commandFiles) {
     console.log("Loaded command: " + command.data.name);
 }
 
-
+// Gathering event files
 const eventFiles = fs.readdirSync('src/events').filter(file => file.endsWith('.js'));
 
+// Setting up the listeners
 for (const file of eventFiles) {
 	const event = require(`./events/${file}`);
 	if (event.once) {
@@ -33,4 +32,5 @@ for (const file of eventFiles) {
 	}
 }
 
+// Login to discord
 client.login(token);

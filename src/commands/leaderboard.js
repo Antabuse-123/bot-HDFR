@@ -9,14 +9,20 @@ module.exports = {
 		.addStringOption(option => option.setName('locale').setDescription('the country you want to see the top 10 teams (ex: fr, us, ...)')),
 	async execute(interaction) {
 		let x = 0;
+		// Get the locale parameter
 		let locale = interaction.options.getString('locale');
+		// Checks if the user provided a locale
 		if(!locale){
 			return await interaction.reply("Please specify a locale");
 		}
+		// Defer the reply to permit more time to execute the command
 		await interaction.deferReply();
+		// Prepare the url
 		locale = locale.toUpperCase();
+		// Scrap the data from the CTFTime website
 		fetch('https://ctftime.org/stats/'+locale)
 		.then(
+			// Parse the data to text
 			response => response.text(),
 			async err => {
 				console.error(err);
@@ -25,8 +31,9 @@ module.exports = {
 			}
 			)
 			.then(
-				text => 
+				text =>
 				{
+					// Get the top 10 teams
 					let txtparse = text.split("\n");
 					let top10 = [];
 					let i = 0;
@@ -48,6 +55,7 @@ module.exports = {
 			).then(
 				(top10) => 
 				{
+					// Get the TOP 10 teams ids
 					let ids = [];
 					for(let j = 0; j< top10.length; j++){
 
@@ -71,16 +79,19 @@ module.exports = {
 				}
 			).then(
 				async ids => {
+					// construct the embed
 					let msgtop10 = new MessageEmbed();
 					msgtop10.setTitle("Top 10 CTF Time Teams from "+locale);
 					msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4");
                     msgtop10.setURL("https://ctftime.org/");
 					interaction.editReply({ embeds: [msgtop10]});
 					function master(){
+						// Set an interval to avoid the rate limit
 						const inter = setInterval(messageSender,1500);
 						async function messageSender(){
 							if(x < 10){
                                 let [id,place] = ids[x];
+								// get the team name via the CTF time API
 								fetch(`https://ctftime.org/api/v1/teams/${id}/`).then((resp) => resp.text()).then(
 									async json => {
                                         try{
