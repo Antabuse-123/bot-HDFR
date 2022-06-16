@@ -1,6 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {MessageEmbed} = require('discord.js');
+const fs = require('fs');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -69,14 +70,16 @@ module.exports = {
 								await interaction.editReply({embeds : embedArray});
 							},
 							async err => {
-								await interaction.editReply(`Error while parsing the JSON`);
-								console.log(err);
+								let content  = `Error: error while parsing the JSON\n`;
+								fs.writeFile("Log.txt",content, { flag: 'a+' }, err => {});
+								await interaction.editReply(content);
 							}
 						)
 				},
 				async err => {
-					console.error(err);
-					await interaction.editReply("CTFTime might be down");
+					let content = "Error : CTFTime might be down\n"
+					fs.writeFile("Log.txt",content, { flag: 'a+' }, err => {});
+					await interaction.editReply(content);
 					return;
 				}
 			)

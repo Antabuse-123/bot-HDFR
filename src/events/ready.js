@@ -3,6 +3,7 @@ const { Client } = require("root-me-api-wrapper");
 const { rootMeApiKey,announceChannelId } = require("../../config.json");
 const { MessageEmbed, Message } = require("discord.js");
 const { Users_db } = require('../db-tables')
+const fs = require('fs');
 
 module.exports = {
 	name: 'ready',
@@ -15,7 +16,8 @@ module.exports = {
 		Users_db.sync();
 		// Function to refresh the DB
 		async function worker(){
-			console.log("Started Worker at " + new Date().toLocaleString());
+			let content = "Started Worker at " + new Date().toLocaleString()
+			fs.writeFile("Log.txt", content + '\n', { flag: 'a+' }, err => {});
 			// Creating the client to interact with the Root-me API
 			let rmclient = new Client(rootMeApiKey);
 			// Getting the list of ids in the DB
@@ -84,7 +86,8 @@ module.exports = {
 					}
 				}
 			}
-			console.log("Ended worker at " + new Date().toLocaleString());
+			content = "Ended Worker at " + new Date().toLocaleString()
+			fs.writeFile("Log.txt", content + '\n', { flag: 'a+' }, err => {});
 		}
 		// Start the worker
 		setInterval(worker, 1000 * 60 * 20);

@@ -3,6 +3,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const { rootMeApiKey } = require('../../config.json');
 const { Client } = require("root-me-api-wrapper");
 const { Users_db } = require("../db-tables");
+const fs = require('fs');
 
 
 module.exports = {
@@ -45,8 +46,9 @@ module.exports = {
                     })
                 }
                 catch(e){
-                    await interaction.editReply("Error while inserting in the DB");
-                    console.error(e);
+                    let content = "Error: error while adding the user in the DB\n";
+                    fs.writeFile("Log.txt",content,{ flag: 'a+' }, err => {});
+                    await interaction.editReply(content)
                     return;
                 }
                 // Sends an embed message if the user was added successfully
@@ -59,8 +61,9 @@ module.exports = {
                 return;
             },
             async err => {
-                await interaction.editReply("A wild error occurs")
-                console.error(err);
+                let content = "Internal error might be caused because the root me API is down\n";
+                await interaction.editReply(content);
+                fs.writeFile("Log.txt",content,{ flag: 'a+' }, err => {});
                 return;
             });
         }

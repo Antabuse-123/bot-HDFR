@@ -1,6 +1,9 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fetch = require("node-fetch");
 const {MessageEmbed} = require('discord.js');
+const fs = require('fs');
+const { error } = require('console');
+
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -9,6 +12,8 @@ module.exports = {
 		.addStringOption(option => option.setName('locale').setDescription('the country you want to see the top 10 teams (ex: fr, us, ...)')),
 	async execute(interaction) {
 		let x = 0;
+		//keep track of the exectuion to show the right error message if any
+		let execution = 0;
 		// Get the locale parameter
 		let locale = interaction.options.getString('locale');
 		// Checks if the user provided a locale
@@ -23,119 +28,158 @@ module.exports = {
 		fetch('https://ctftime.org/stats/'+locale)
 		.then(
 			// Parse the data to text
-			response => response.text(),
+			async response => {
+				execution +=1;
+				// Check if the request was successful
+				if(response.status === 200){
+					// Get the data
+					response.text()
+				}
+				else{
+					// If the request was not successful, show the error message
+					throw error("Error while fetching the CTF make sure that the locale is correct");
+				}
+			},
 			async err => {
-				console.error(err);
-				await interaction.editReply("Error while fetching the CTF make sure that the locale is correct");
+				
+				throw error("Internal error on fetch " + err);
+			}
+		)
+		.then(
+			text =>
+			{
+				// Get the top 10 teams
+				execution +=1;
+				let txtparse = text.split("\n");
+				let top10 = [];
+				let i = 0;
+				for (const string of txtparse) {
+					if(string.includes('<tr><td class="place">') && i < 10){
+						let str = "";
+						str += string;
+						top10.push(str.trim());
+						i++;
+					}
+				}
+				return top10;
+			},
+			async err =>
+			{
+				throw error(err);
+			}
+		)
+		.then(
+			(top10) => 
+			{
+				// Get the TOP 10 teams ids
+				execution +=1;
+				let ids = [];
+				for(let j = 0; j< top10.length; j++){
+					for(let k = 0; k<top10[j].length;k++){
+						if(top10[j][k]<= '9' && top10[j][k]>='0' && top10[j][k-1] == '/'){
+							let id = "" + top10[j][k];
+							while(top10[j][k+1] != '"'){
+								k++;
+								id+=top10[j][k];
+							}
+							ids.push([id,j+1]);
+						}
+					}
+				}
+				return ids;
+			},
+			async err => 
+			{
+				throw error(err);
+			}
+		)
+		.then(
+			async ids => {
+				// construct the embed
+				execution +=1;
+				let msgtop10 = new MessageEmbed();
+				msgtop10.setTitle("Top 10 CTF Time Teams from "+locale);
+				msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4");
+                msgtop10.setURL("https://ctftime.org/");
+				interaction.editReply({ embeds: [msgtop10]});
+				function master(){
+					// Set an interval to avoid the rate limit
+					const inter = setInterval(messageSender,1500);
+					async function messageSender(){
+						if(x < 10){
+                            let [id,place] = ids[x];
+							// get the team name via the CTF time API
+							fetch(`https://ctftime.org/api/v1/teams/${id}/`).then((resp) => resp.text()).then(
+								async json => {
+                                    try{
+                                        json = JSON.parse(json);
+                                    }
+                                    catch(err){
+                                        console.error(err);
+										return;
+                                    }
+									
+									msgtop10.addField(json.name, "Place : " + place);
+									try{
+										await interaction.editReply({ embeds: [msgtop10]});
+									}
+									catch(err){
+										await interaction.editReply({ embeds: [msgtop10]});
+										console.error(err);
+									}
+									
+		
+								},
+								async err => {
+									console.error(err);
+									await interaction.editReply("Error");
+									return "";
+								}
+								);
+						}
+						else{
+							clearInterval(inter);
+						}
+						x++;
+					}
+				}
+				master();
+				return;
+			},
+			async err => 
+			{
+				throw error(err);
+			}
+		)
+		.catch(
+			async err => {
+				errorHandler();
 				return;
 			}
-			)
-			.then(
-				text =>
-				{
-					// Get the top 10 teams
-					let txtparse = text.split("\n");
-					let top10 = [];
-					let i = 0;
-					for (const string of txtparse) {
-						if(string.includes('<tr><td class="place">') && i < 10){
-							let str = "";
-							str += string;
-							top10.push(str.trim());
-							i++;
-						}
-					}
-					return top10;
-				},
-				async err =>
-				{
-					console.error(err);
-					await interaction.editReply("Error");
-				}
-			).then(
-				(top10) => 
-				{
-					// Get the TOP 10 teams ids
-					let ids = [];
-					for(let j = 0; j< top10.length; j++){
-
-						for(let k = 0; k<top10[j].length;k++){
-							if(top10[j][k]<= '9' && top10[j][k]>='0' && top10[j][k-1] == '/'){
-								let id = "" + top10[j][k];
-								while(top10[j][k+1] != '"'){
-									k++;
-									id+=top10[j][k];
-								}
-								ids.push([id,j+1]);
-							}
-						}
-					}
-					return ids;
-				},
-				async err => 
-				{
-					console.error(err);
-					await interaction.editReply("Error")
-				}
-			).then(
-				async ids => {
-					// construct the embed
-					let msgtop10 = new MessageEmbed();
-					msgtop10.setTitle("Top 10 CTF Time Teams from "+locale);
-					msgtop10.setThumbnail("https://avatars.githubusercontent.com/u/2167643?s=200&v=4");
-                    msgtop10.setURL("https://ctftime.org/");
-					interaction.editReply({ embeds: [msgtop10]});
-					function master(){
-						// Set an interval to avoid the rate limit
-						const inter = setInterval(messageSender,1500);
-						async function messageSender(){
-							if(x < 10){
-                                let [id,place] = ids[x];
-								// get the team name via the CTF time API
-								fetch(`https://ctftime.org/api/v1/teams/${id}/`).then((resp) => resp.text()).then(
-									async json => {
-                                        try{
-                                            json = JSON.parse(json);
-                                        }
-                                        catch(err){
-                                            console.error(err);
-											return;
-                                        }
-										
-										msgtop10.addField(json.name, "Place : " + place);
-										try{
-											await interaction.editReply({ embeds: [msgtop10]});
-										}
-										catch(err){
-											await interaction.editReply({ embeds: [msgtop10]});
-											console.error(err);
-										}
-										
-			
-									},
-									async err => {
-										console.error(err);
-										await interaction.editReply("Error");
-										return "";
-									}
-									);
-							}
-							else{
-								clearInterval(inter);
-							}
-							x++;
-						}
-					}
-					master();
-					return;
-				},
-				async err => 
-				{
-					console.error(err);
-					interaction.editReply("Error");
-				}
-
-			)
-	
+		)
+		async function errorHandler(){
+			switch(execution){
+				case 1:
+					let content = "Error: error while fetching the CTF because the locale "+ locale +" is wrong or CTF is down\n";
+					fs.writeFile("Log.txt",content,{ flag: 'a+' }, err => {});
+					await interaction.editReply(content);
+					break;
+				case 2:
+					content = "Error: error while parsing the page\n";
+					fs.writeFile("Log.txt",content,{ flag: 'a+' }, err => {});
+					await interaction.editReply(content);
+					break;
+				case 3:
+					content = "Error: error while parsing the ids\n";
+					fs.writeFile("Log.txt",content,{ flag: 'a+' }, err => {});
+					await interaction.editReply(content);
+					break;
+				case 4:
+					content = "Error: error while creating the embed and parsing the teams informations\n";
+					fs.writeFile("Log.txt",content,{ flag: 'a+' }, err => {});
+					await interaction.editReply(content);
+					break;
+			}
+		}
 	},
 };

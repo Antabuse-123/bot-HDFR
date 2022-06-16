@@ -1,6 +1,8 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const fetch = require('node-fetch');
 const {MessageEmbed} = require('discord.js');
+const { error } = require('console');
+const fs = require('fs');
 
 module.exports = {
 	data: new SlashCommandBuilder()
@@ -17,7 +19,8 @@ module.exports = {
         fetch(`https://ctftime.org/api/v1/events/${id}/`)
             .then(
                 response => {
-                    response.json()
+                    if(response.status === 200){
+                        response.json()
                         .then(
                             async body => {
                                 let start = body.start.split('T');
@@ -64,11 +67,27 @@ module.exports = {
                                 setTimeout(vote, 24 * 60 * 60 * 1000);
                             }
                         )
+                        .catch(
+                            err => {
+                                throw error(err);
+                            }
+                        )
+                    }
+                    else{
+                        throw error("Error while fetching the CTF");
+                    }
+                    
                 },
-                async err => {
-                    console.error(err);
-                    await interaction.editReply("Error while fetching the CTF make sure the id is correct");
-                    return;
-                })
+                err => {
+                    throw error(err);
+                }
+                )
+                .catch(
+                    async err => {
+                        let content = "Error: The id " + id +" is incorect\n"
+                        await interaction.editReply("Error while fetching the CTF make sure the id is correct");
+                        fs.writeFile("Log.txt",content,{ flag: 'a+' }, err => {});
+                    }
+                )
     }
 };

@@ -3,6 +3,7 @@ const { rootMeApiKey } = require('../../config.json');
 const { Client } = require("root-me-api-wrapper");
 const { Users_db } = require('../db-tables');
 const { MessageEmbed } = require('discord.js');
+const fs = require('fs');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -54,7 +55,7 @@ module.exports = {
                 await interaction.editReply({embeds : [embed]});
             })
             .catch(err => {
-                console.error(err);
+                fs.writeFile("Log.txt","Error: " + err + "\n", { flag: 'a+' }, err => {});
                 return;
             });
             return;
