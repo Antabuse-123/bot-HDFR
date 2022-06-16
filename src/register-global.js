@@ -10,24 +10,24 @@ let commands = [];
 
 console.log("Finding commands...");
 for (const file of commandFiles) {
-	const command = require(`./commands/${file}`);
-	commands.push(command.data.toJSON());
-	console.log("Found command: " + command.data.name);
+    const command = require(`./commands/${file}`);
+    commands.push(command.data.toJSON());
+    console.log("Found command: " + command.data.name);
 }
 
 const rest = new REST({ version: '9' }).setToken(token);
 
 (async () => {
-	try {
-		console.log('Started refreshing application (/) commands.');
+    try {
+        console.log('Started refreshing application (/) commands.');
 
-		await rest.put(
+        await rest.put(
             Routes.applicationCommands(clientId),
             { body: commands },
         );        
 
-		console.log('Successfully reloaded application (/) commands.');
-	} catch (error) {
-		console.error(error);
-	}
+        console.log('Successfully reloaded application (/) commands.');
+    } catch (error) {
+        console.error(error);
+    }
 })();

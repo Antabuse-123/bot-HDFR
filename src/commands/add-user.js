@@ -7,12 +7,12 @@ const fs = require('fs');
 
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('add-user')
-		.setDescription('Add a user to the DB')
-		.addIntegerOption(option => option.setName('id').setDescription('Your Root me ID').setRequired(false))
+    data: new SlashCommandBuilder()
+        .setName('add-user')
+        .setDescription('Add a user to the DB')
+        .addIntegerOption(option => option.setName('id').setDescription('Your Root me ID').setRequired(false))
         .addStringOption(option => option.setName('name').setDescription('Your Root-me name').setRequired(false)),
-	async execute(interaction) {
+    async execute(interaction) {
         // Checks if any parameter has been given
         if(!interaction.options.getInteger('id') && !interaction.options.getString('name')) {
             return await interaction.reply("You need to provide either your Root me ID or your Root me name!");

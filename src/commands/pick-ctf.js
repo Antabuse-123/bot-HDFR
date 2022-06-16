@@ -5,11 +5,11 @@ const { error } = require('console');
 const fs = require('fs');
 
 module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('pickctf')
-		.setDescription('Choose a CTF from CTF time and create a pool to see who is interested in it')
-		.addIntegerOption(option => option.setName('id').setDescription('the id of the CTF').setRequired(true)),
-	async execute(interaction) {
+    data: new SlashCommandBuilder()
+        .setName('pickctf')
+        .setDescription('Choose a CTF from CTF time and create a pool to see who is interested in it')
+        .addIntegerOption(option => option.setName('id').setDescription('the id of the CTF').setRequired(true)),
+    async execute(interaction) {
         //Checking for the permission
         let id = interaction.options.getInteger('id');
         if(!id){
@@ -24,25 +24,25 @@ module.exports = {
                         .then(
                             async body => {
                                 let start = body.start.split('T');
-                    			let end = body.finish.split('T');
+                                let end = body.finish.split('T');
                                 let embed = new MessageEmbed()
                                     .setTitle("Poll for the next CTF")
                                     .setDescription(body.title,`${body.description}`)
                                     .setColor('#36393f')
                                     .addField(
-										":information_source: Infos",
-										`**Starts on :** ${start[0]}, at : ${start[1]} \n
-										**Host by :** ${body.organizers.name} \n
-										**Ends :** ${end[0]}, at : ${end[1]} \n
-										**Website :** ${body.url} \n
-										**CTF Time URL :** ${body.ctftime_url} \n
-										**IRL CTF ? :** ${body.onsite} \n
-										**Format :** ${body.format} \n 
-										**Duration :** ${body.duration.hours} Heures & ${body.duration.days} Jours \n 
-										**Number of Teams Interested :** ${body.participants} \n
-										**Weight** ${body.weight} \n
-										**CTF ID :** ${body.id}`
-									)
+                                        ":information_source: Infos",
+                                        `**Starts on :** ${start[0]}, at : ${start[1]} \n
+                                        **Host by :** ${body.organizers.name} \n
+                                        **Ends :** ${end[0]}, at : ${end[1]} \n
+                                        **Website :** ${body.url} \n
+                                        **CTF Time URL :** ${body.ctftime_url} \n
+                                        **IRL CTF ? :** ${body.onsite} \n
+                                        **Format :** ${body.format} \n 
+                                        **Duration :** ${body.duration.hours} Heures & ${body.duration.days} Jours \n 
+                                        **Number of Teams Interested :** ${body.participants} \n
+                                        **Weight** ${body.weight} \n
+                                        **CTF ID :** ${body.id}`
+                                    )
                                     .setThumbnail(body.logo);
                                 await interaction.editReply({embeds: [embed]});
                                 const msg = await interaction.fetchReply();
