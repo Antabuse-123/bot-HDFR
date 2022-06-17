@@ -1,11 +1,11 @@
-FROM node:16.15.15
+FROM node:16-alpine3.14
 
-WORKDIR /usr/src/bot-HDFR
+WORKDIR /app
 
-COPY package*.json ./
+COPY package*.json /app
 
 RUN npm install
 
-COPY . .
+COPY . /app
 
-CMD ["npm", "start"]
+CMD ["npm","run", "start"]
