@@ -33,7 +33,7 @@ module.exports = {
                 // Check if the request was successful
                 if(response.status === 200){
                     // Get the data
-                    response.text()
+                    return response.text();
                 }
                 else{
                     // If the request was not successful, show the error message
@@ -158,9 +158,10 @@ module.exports = {
             }
         )
         async function errorHandler(){
+            let content = "";
             switch(execution){
                 case 1:
-                    let content = "Error: error while fetching the CTF because the locale "+ locale +" is wrong or CTF is down\n";
+                    content = "Error: error while fetching the CTF because the locale "+ locale +" is wrong or CTF is down\n";
                     fs.writeFile("Log.txt",content,{ flag: 'a+' }, err => {});
                     await interaction.editReply(content);
                     break;
