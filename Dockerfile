@@ -2,10 +2,10 @@ FROM node:16-alpine3.14
 
 WORKDIR /app
 
-COPY package*.json /app
+COPY package*.json /app/
 
 RUN npm install
 
-COPY . /app
+COPY . /app/
 
-CMD ["npm","run", "start"]
+CMD ["npm", "run", "start"]
