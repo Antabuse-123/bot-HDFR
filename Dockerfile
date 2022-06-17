@@ -1,11 +1,12 @@
-FROM node:16-alpine3.14
+FROM node:16
 
-WORKDIR /app
+RUN mkdir -p /usr/src/bot
+WORKDIR /usr/src/bot
 
-COPY package*.json /app/
+COPY package.json /usr/src/bot
+RUN npm --verbose install
 
-RUN npm install
+COPY . /usr/src/bot
 
-COPY . /app/
 
-CMD ["npm", "run", "start"]
+CMD ["npm", " start"]
