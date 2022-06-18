@@ -9,4 +9,4 @@ RUN npm --verbose install
 COPY . /usr/src/bot
 
 
-CMD ["npm", " start"]
+CMD ["npm", "start"]
