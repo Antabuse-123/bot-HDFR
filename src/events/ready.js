@@ -2,7 +2,7 @@ const Sequelize = require("sequelize")
 const { Client } = require("root-me-api-wrapper");
 const { rootMeApiKey,announceChannelId } = require("../../config.json");
 const { MessageEmbed, Message } = require("discord.js");
-const { Users_db } = require('../db-tables')
+const { Users_db, UserClass } = require('../db-tables')
 const fs = require('fs');
 
 module.exports = {
@@ -25,7 +25,7 @@ module.exports = {
             let ids = tmp.map(user=> user.id);
             for(let id of ids){
                 // Avoid the rate limit of the Root-me API
-                await new Promise(f => setTimeout(f, 500));
+                await new Promise(f => setTimeout(f, 1000));
                 // Getting the user from the Root-me API
                 let nuser = await rmclient.getUser(id);
                 // If the is an error the id of the user will be -1
@@ -35,6 +35,10 @@ module.exports = {
                 }
                 // Getting specific information from the user
                 let user = await Users_db.findOne({where: {id: id}});
+                if(!user){
+                    fs.writeFile("Log.txt", "ERROR : error while updating the user with the id : " +id);
+                    break;
+                }
                 // Itterating over the user's solved challenges
                 for(let solved of nuser.getSolve()){
                     // If the user has solved a new challenge

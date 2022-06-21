@@ -8,7 +8,9 @@ if (!fs.existsSync("Log.txt")) {
     fs.writeFile("Log.txt", "", { flag: 'a+' }, err => {});
 }
 else{
-    fs.writeFile("Log.txt", "", { flag: 'w' }, err => {});
+    fs.readFile('Log.txt', (err,data)=>{
+        fs.writeFile('OldLogs.txt',data + '\n', {flag: 'a+'}, err=>{});
+    })
 }
 
 // Create a new discord Client
