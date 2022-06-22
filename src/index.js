@@ -11,6 +11,7 @@ else{
     fs.readFile('Log.txt', (err,data)=>{
         fs.writeFile('OldLogs.txt',data + '\n', {flag: 'a+'}, err=>{});
     })
+    fs.writeFile("Log.txt","",{flag : 'w'}, err => {});
 }
 
 // Create a new discord Client
