@@ -35,20 +35,16 @@ module.exports = {
                 }
                 // Getting specific information from the user
                 let user = await Users_db.findOne({where: {id: id}});
-                if(!user){
-                    fs.writeFile("Log.txt", "ERROR : error while updating the user with the id : " +id);
-                    break;
-                }
                 // Itterating over the user's solved challenges
                 for(let solved of nuser.getSolve()){
                     // If the user has solved a new challenge
-                    if(!user.solve.includes(solved)){
+                    if(!user.solve.toString().includes(solved)){
                         // Get the challenge properties from the Root-me API
                         let chall = await rmclient.getChallenge(solved);
                         // Create a new embed
                         let embed = new MessageEmbed();
                         embed.setTitle("New challenge solved!");
-                        embed.setDescription(`${nuser.getName()} solved :${chall.getTitle()}`);
+                        embed.setDescription(`${nuser.getName()} solved : ${chall.getTitle()}`);
                         embed.addField("New Score", `${user.score + chall.getPoints()}`);
                         embed.setColor("#00ff00");
                         // Update the DB

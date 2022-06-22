@@ -4,6 +4,8 @@
   - [Description](#description)
   - [Features](#features)
   - [Setup](#setup)
+    - [Docker](#docker)
+    - [bare-metal](#bare-metal)
   - [Contributting](#contributting)
     - [How to contribute](#how-to-contribute)
       - [By doing a pull request](#by-doing-a-pull-request)
@@ -23,7 +25,24 @@ Being a bot for a CTF team he has obviously some CTF specific features.
 
 ## Setup
 
-You will need at least Node.js Version 16.9.x or higher.
+### Docker
+
+```bash
+git clone https://github.com/Antabuse-does-something/bot-HDFR.git
+cd bot-HDFR
+touch config.json
+```
+
+Don't forget to fill the config according to the template the exectute the following commands
+
+```bash
+docker build -t bot-hdfr .
+docker run -d bot-hdfr
+```
+
+### bare-metal
+
+You will need at least Node.js Version 16.x.x or higher.
 
 ```bash
 git clone https://github.com/Antabuse-does-something/bot-HDFR.git
@@ -48,7 +67,7 @@ npm run local
 npm run global
 ```
 
-Once this is done you just have to start the bot with :
+Once this is done you have to start the bot:
 
 ```bash
 npm start
