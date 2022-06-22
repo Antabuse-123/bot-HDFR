@@ -7,6 +7,6 @@ COPY package.json /usr/src/bot
 RUN npm --verbose install
 
 COPY . /usr/src/bot
-
+RUN npm run global
 
 CMD ["npm", "start"]

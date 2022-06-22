@@ -22,6 +22,8 @@ Being a bot for a CTF team he has obviously some CTF specific features.
 -  Pulling the 5 next CTF for the week to come
 -  Pulling the Top 10 of best Teams from a certain country
 -  Create a vote for the next CTF to do
+-  Follow the progress of people on the website [Root-me](https://www.root-me.org/)
+-  Get the info of some challenges and users from [Root-me](https://www.root-me.org/)
 
 ## Setup
 
