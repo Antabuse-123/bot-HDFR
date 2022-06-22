@@ -45,7 +45,10 @@ module.exports = {
                         let embed = new MessageEmbed();
                         embed.setTitle("New challenge solved!");
                         embed.setDescription(`${nuser.getName()} solved : ${chall.getTitle()}`);
-                        embed.addField("New Score", `${user.score + chall.getPoints()}`);
+                        embed.addField("additional informations:",`**Category** : ${chall.getCategory()}\n
+                                                                **Number of points** : ${chall.getPoints()}\n
+                                                                **Difficulty** : ${chall.getDifficulty()}`)
+                        embed.addField("New Score :", `${user.score + chall.getPoints()}`);
                         embed.setColor("#00ff00");
                         // Update the DB
                         let affectedrow = await Users_db.update({
@@ -77,6 +80,8 @@ module.exports = {
                             let channel = client.channels.cache.get(announceChannelId);
                             if(channel){
                                 await channel.send({embeds : [embed]});
+                                // Update the user
+                                user = await Users_db.findOne({where: {id: id}});
                             }
                             else{
                                 console.error("Failed to send the embed to the announce channel");
