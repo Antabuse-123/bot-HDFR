@@ -101,7 +101,6 @@ module.exports = {
                             if(channel){
                                 await channel.send({embeds : [embed]});
                                 // Update the user
-                                user = await Users_db.findOne({where: {id: id}});
                             }
                             else{
                                 console.error("Failed to send the embed to the announce channel");
