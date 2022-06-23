@@ -14,24 +14,7 @@ module.exports = {
         client.user.setActivity("Watching for new CTFs");
         // Loading the DB
         Users_db.sync();
-        /**
-         * Checks if a user of the DB has already solve a particular challenge
-         * @param {Number} user_id the user ID
-         * @param {Number} chall_id the challenge ID
-         * @returns {Boolean} True if the chall has never been solved
-         */
-        async function isFirstLocalFirstBlood(user_id, chall_id){
-            let tmp = await Users_db.findAll({attributes : ["id","solve"]});
-            let solveChall = tmp.map(user=> [user.id, user.solve]);
-            for(let i = 0; i < solveChall.lenght; i++){
-                if(solveChall[i][0] != user_id){
-                    if(solveChall[i][1].toString().includes(chall_id)){
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
+
         // Function to refresh the DB
         async function worker(){
             let content = "Started Worker at " + new Date().toLocaleString()
@@ -67,8 +50,7 @@ module.exports = {
                         **Category** : ${chall.getCategory()}\n
                         **Number of points** : ${chall.getPoints()}\n
                         **Difficulty : ${chall.getDifficulty()}\n
-                        **New Score : ${user.score + chall.getPoints()}
-                        **Local first blood** : ${await isFirstLocalFirstBlood(user.id,chall.getId()) ? "Yes :drop_of_blood:" : "No"}`);
+                        **New Score** : ${user.score + chall.getPoints()}`);
                         embed.setColor("#00ff00");
                         // Update the DB
                         let affectedrow = await Users_db.update({
@@ -100,7 +82,6 @@ module.exports = {
                             let channel = client.channels.cache.get(announceChannelId);
                             if(channel){
                                 await channel.send({embeds : [embed]});
-                                // Update the user
                             }
                             else{
                                 console.error("Failed to send the embed to the announce channel");
